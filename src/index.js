@@ -6,9 +6,9 @@ import snoowrap from 'snoowrap';
 
 function Square(props) {
 	return (
-		<button className="square">
+		<square className="square">
 			{props.value}
-		</button>
+		</square>
 	);
 } 
 
@@ -19,6 +19,7 @@ class Board extends React.Component {
 				squares : [],
 				loading: true,
 				response: [],
+				limit : 1,
 			};
 		}
 
@@ -26,10 +27,11 @@ class Board extends React.Component {
 		const apiObj = new snoowrap({
 			userAgent: 'Abcasdasd',
 			clientId: 'h7ADaCnt60mBhg',
-			clientSecret: '',
-			username: 'USERNAME',
-			password: 'PASSWORD'
+			clientSecret: '89eM1x2Ec3JhMsJvtVQlQ6qCExo',
+			username: 'OverIsopod',
+			password: '1234567890'
 		});
+		// apiObj.getSubmission('c1xhdm').expandReplies({limit: 5, depth: 5}).then((res)=>{
 		apiObj.getHot().map(post => post.title).then((res)=>{
 			this.setState({
 				response: res,
@@ -49,16 +51,16 @@ class Board extends React.Component {
 	//   for(var i = 0 ; i < 5 ; i++) {
 		//   boxes.push(<div className="board-row">{this.renderSquare(num[i])}</div>);
 	//   }
-
+	var limit = 1;
 	// instead of using For loop we will use Map or ForEach, this is good practise.
-
-	  num.forEach((nu, index)=>{
+	console.log('limit ', limit );
+	  num.slice((limit-1)*5, limit*5).forEach((nu, index)=>{
 		   boxes.push(<Square value={nu} />)
 		// boxes.push(<div className="board-row">{this.renderSquare(nu)}</div>);
 		// setTimeout(()=>{
 		// 	console.log('hello', index);
 		// }, 5000);
-	  })
+	  })	
 	  return boxes;
 
   }
