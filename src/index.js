@@ -2,10 +2,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import snoowrap from 'snoowrap';
 
 function Square(props) {
 	return (
-		<button className="square" onClick={props.onClick}>
+		<button className="square">
 			{props.value}
 		</button>
 	);
@@ -15,62 +16,65 @@ class Board extends React.Component {
 	constructor(props) {
 		super(props);
 			this.state = {
-				squares : Array(9).fill(null),	
-				xIsNext: true,
+				squares : [],
+				loading: true,
+				response: [],
 			};
 		}
 
-	handleClick(i) {
-		const squares = this.state.squares.slice();
-
-		if(calculateWinner(squares) || squares[i]) {
-			return;
-		}
-
-		squares[i] =  this.state.xIsNext ? 'X' : 'O';
-		this.setState({
-			squares: squares,
-			xIsNext: !this.state.xIsNext,
+	componentDidMount(){
+		const apiObj = new snoowrap({
+			userAgent: 'Abcasdasd',
+			clientId: 'h7ADaCnt60mBhg',
+			clientSecret: '',
+			username: 'USERNAME',
+			password: 'PASSWORD'
+		});
+		apiObj.getHot().map(post => post.title).then((res)=>{
+			this.setState({
+				response: res,
+				loading: false,
+			})
 		});
 	}
 	
   renderSquare(i) {	
     return (
-		<Square 	
-		value={ this.state.squares[i] }
-		onClick={() => this.handleClick(i)}
-		/>
-		);
+		<Square value={ i }/>);
   }
 
-  render() {
-		const winner = calculateWinner(this.state.squares);
-		let status;
+  createbox = (num) => {
+		var boxes = [];
 
-		if(winner) {
-			status = 'Winner is ' + winner;
-		} else {
-			status = 'Next player: '+ (this.state.xIsNext ? 'X' : 'O');
-		}
+	//   for(var i = 0 ; i < 5 ; i++) {
+		//   boxes.push(<div className="board-row">{this.renderSquare(num[i])}</div>);
+	//   }
+
+	// instead of using For loop we will use Map or ForEach, this is good practise.
+
+	  num.forEach((nu, index)=>{
+		   boxes.push(<Square value={nu} />)
+		// boxes.push(<div className="board-row">{this.renderSquare(nu)}</div>);
+		// setTimeout(()=>{
+		// 	console.log('hello', index);
+		// }, 5000);
+	  })
+	  return boxes;
+
+  }
+
+
+  render() {
+		const { loading, response } = this.state;
 
     return (
       <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+		  { !loading ? <div>{this.createbox(response)}</div> : <div>LOADING...</div>}
+
+        {/* {!loading ? <div> <div className="status">{status}</div>
+			{this.createbox()</div>
+			} */}
+		
       </div>
     );
   }
@@ -81,9 +85,8 @@ class Game extends React.Component {
 		super(props);
 		this.state = {
 			history: [{
-				squares: Array(9).fill(null), 
+				squares: [], 
 			}],
-			xIsNext: true,
 		};
 	}
 	
@@ -108,24 +111,3 @@ ReactDOM.render(
   <Game />,
   document.getElementById('root')
 );
-
-function calculateWinner(squares) {
-	const lines = [
-		[0,1,2],
-		[3,4,5],
-		[6,7,8],
-		[0,3,6],
-		[1,4,7],
-		[2,5,8],
-		[0,4,5],
-		[2,4,6],
-	];
-
-	for (let i = 0; i < lines.length ; i++){
-		const [a, b, c] = lines[i];
-		if (squares[a] && squares[b] === squares[a] && squares[a] === squares[c]){
-		return squares[a]; 
-		}
-	}
-	return null;
-}
