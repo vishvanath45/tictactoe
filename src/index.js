@@ -20,6 +20,7 @@ class Board extends React.Component {
 				loading: true,
 				response: [],
 				limit : 1,
+				show_next:true,
 			};
 		}
 
@@ -47,41 +48,40 @@ class Board extends React.Component {
 
   createbox = (num) => {
 
-	const {limit} = this.state;
+	const {limit, show_next} = this.state;
 		var boxes = [];
 
-	//   for(var i = 0 ; i < 5 ; i++) {
-		//   boxes.push(<div className="board-row">{this.renderSquare(num[i])}</div>);
-	//   }
-	
 	// instead of using For loop we will use Map or ForEach, this is good practise.
+	if(Math.ceil(num.length/5)*5 >= limit*5)
+	{
 	  num.slice((limit-1)*5, limit*5).forEach((nu, index)=>{
 		   boxes.push(<Square value={nu} />)
-		// boxes.push(<div className="board-row">{this.renderSquare(nu)}</div>);
-		// setTimeout(()=>{
-		// 	console.log('hello', index);
-		// }, 5000);
-	  })	
+	  })
+	}
+	else
+	{
+		boxes.push(<Square value={"You have reached the end"}/>);
+		this.setState({show_next: false});
+		console.log( show_next);
+	}	
 	  return boxes;
 
   }
 handleclick = () => {
 	var {limit} = this.state;
-	this.setState({limit: this.state.limit + 1 });
+	this.setState({limit: limit + 1 });
 	this.forceUpdate();
 }
 
   render() {
-		const { loading, response } = this.state;
-
+		const { loading, response, show_next } = this.state;
+		console.log( show_next);
     return (
-      <div>
-		  { !loading ? <div>{this.createbox(response)}</div> : <div>LOADING...</div>}
 
-        {/* {!loading ? <div> <div className="status">{status}</div>
-			{this.createbox()</div>
-			} */}
-			<button onClick={this.handleclick}>Load More</button>
+      <div>
+		  { !loading && show_next ? <div>{this.createbox(response)}</div> : <div>LOADING...</div>}
+			
+		  { show_next ? <div><button onClick={this.handleclick}>Load More</button></div> : <div>*END*</div> }
 		
       </div>
     );
