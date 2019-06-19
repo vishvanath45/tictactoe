@@ -46,14 +46,15 @@ class Board extends React.Component {
   }
 
   createbox = (num) => {
+
+	const {limit} = this.state;
 		var boxes = [];
 
 	//   for(var i = 0 ; i < 5 ; i++) {
 		//   boxes.push(<div className="board-row">{this.renderSquare(num[i])}</div>);
 	//   }
-	var limit = 1;
+	
 	// instead of using For loop we will use Map or ForEach, this is good practise.
-	console.log('limit ', limit );
 	  num.slice((limit-1)*5, limit*5).forEach((nu, index)=>{
 		   boxes.push(<Square value={nu} />)
 		// boxes.push(<div className="board-row">{this.renderSquare(nu)}</div>);
@@ -64,7 +65,11 @@ class Board extends React.Component {
 	  return boxes;
 
   }
-
+handleclick = () => {
+	var {limit} = this.state;
+	this.setState({limit: this.state.limit + 1 });
+	this.forceUpdate();
+}
 
   render() {
 		const { loading, response } = this.state;
@@ -76,6 +81,7 @@ class Board extends React.Component {
         {/* {!loading ? <div> <div className="status">{status}</div>
 			{this.createbox()</div>
 			} */}
+			<button onClick={this.handleclick}>Load More</button>
 		
       </div>
     );
